@@ -10,8 +10,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
+
+import javax.crypto.spec.PBEKeySpec;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 
 public class Main {
@@ -93,9 +96,25 @@ public class Main {
         return data;
     }
 
+    private static String decryptString(String s) {
+        try {
+            SecretKeySpec secretKeySpec0 = new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec("qyma".toCharArray(), "$9s1{;1H".getBytes("UTF-8"), 5, 0x100)).getEncoded(), "AES");
+            Cipher cipher0 = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher0.init(2, secretKeySpec0, new IvParameterSpec("F-=5!2]/9G(<(=uY".getBytes(StandardCharsets.UTF_8)));
+
+            ;
+            byte[] arr_b = cipher0.doFinal(Base64.getDecoder().decode(s));
+            return arr_b == null ? s : new String(arr_b);
+        }
+        catch(Exception unused_ex) {
+            return s;
+        }
+    }
+
     public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException {
 
-        System.out.println(decrypt("8C8CB738F2CD708D"));
+//        System.out.println(decrypt("8C8CB738F2CD708D"));
+        System.out.println(decryptString("rOHJyHciQlHptt+6NeNqoQ=="));
 //        if (args.length == 1) {
 //            System.out.println(decrypt(args[0]));
 //        } else {
